@@ -50,16 +50,16 @@ var snakeTail       = TAILRIGHT
         return Snake(body, newDirection)
     }
 
-    fun Snake.nextHeadPosition(): Position {
-        val head = body.first()
-        val position = when (direction) {
-            Direction.UP -> Position(head.x, head.y - 1).wrap()
-            Direction.DOWN -> Position(head.x, head.y + 1).wrap()
-            Direction.LEFT -> Position(head.x - 1, head.y).wrap()
-            Direction.RIGHT -> Position(head.x + 1, head.y).wrap()
-        }
-        return position
+fun Snake.nextHeadPosition(): Position {
+    val head = body.first()
+    val movement = when (direction) {
+        Direction.UP -> Position(0, -1)
+        Direction.DOWN -> Position(0, 1)
+        Direction.LEFT -> Position(-1, 0)
+        Direction.RIGHT -> Position(1, 0)
     }
+    return (head + movement).wrap() // Soma a posição de movimento e aplica o wrap
+}
 
 
 enum class Direction {
