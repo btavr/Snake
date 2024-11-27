@@ -1,10 +1,6 @@
 import pt.isel.canvas.*
 const val WIDTH      = 640
 const val HEIGHT     = 512
-const val XSTART     = 10
-const val YSTART     = 8
-const val SNAKESPEED = 250
-const val WALLSPEED  = 5000
 const val CEL        = 32
 
 data class Game(val snake: Snake, val wall: List<Position>)
@@ -12,7 +8,7 @@ data class Game(val snake: Snake, val wall: List<Position>)
 fun main() {
     onStart {
         val arena = Canvas(WIDTH, HEIGHT, YELLOW) // 20x16 células de 32px
-        val snake = Snake(listOf(Position(XSTART, YSTART), Position(XSTART - 1, YSTART)), Direction.RIGHT)
+        val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8)), Direction.RIGHT)
         var game = Game(snake, wall = emptyList())
 
         arena.onKeyPressed { key ->
@@ -34,14 +30,14 @@ fun main() {
             }
         }
 
-        arena.onTimeProgress(SNAKESPEED) {
+        arena.onTimeProgress(250) {
             val nextPosition = game.snake.nextHeadPosition()
             val newSnake = if (nextPosition in game.wall) {
                 game.snake
             } else {
                 game.snake.move()
             }
-            val newWall = if (it / WALLSPEED > game.wall.size) {
+            val newWall = if (it / 5000 > game.wall.size) {
                 generateBrick(game)
             } else {
                 game.wall
