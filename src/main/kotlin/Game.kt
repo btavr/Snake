@@ -60,19 +60,6 @@ fun drawGame(arena: Canvas, game: Game) {
         arena.drawSnake(game.snake)
     }
     // Desenhar tijolos
-    for (brick in game.wall) {
-        arena.drawImage("brick.png", brick.x * CEL, brick.y * CEL,CEL,CEL)
-    }
+    arena.drawBricks(game.wall)
 }
 
-fun generateBrick(game: Game): List<Position> {
-    val totalCells = (0 until 20).flatMap { x -> (0 until 16).map { y -> Position(x, y) } }
-    val freeCells = totalCells.filter { it !in game.snake.body && it !in game.wall }
-//       val freeCells = (0 until 20).flatMap { x ->
-//        (0 until 16).map { y -> Position(x, y) }
-//    }.filter { it !in game.snake.body && it !in game.wall }
-
-    return if (freeCells.isNotEmpty()) {
-        game.wall + freeCells.random()
-    } else game.wall
-}
