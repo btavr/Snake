@@ -2,28 +2,19 @@ import pt.isel.canvas.*
 
 data class Snake(val body: List<Position>, val direction: Direction)
 
-const val HEADUP = "snake|192,0,64,64"
-const val HEADRIGHT = "snake|256,0,64,64"
-const val HEADDOWN = "snake|256,64,64,64"
-const val HEADLEFT = "snake|192,64,64,64"
-const val TAILUP = "snake|192,128,64,64"
-const val TAILRIGHT = "snake|256,128,64,64"
-const val TAILDOWN = "snake|256,192,64,64"
-const val TAILLEFT = "snake|192,192,64,64"
-
 fun Canvas.drawSnake(snake: Snake) {
     this.erase()
     val headImage = when (snake.direction) {
-        Direction.UP -> HEADUP
-        Direction.DOWN -> HEADDOWN
-        Direction.LEFT -> HEADLEFT
-        Direction.RIGHT -> HEADRIGHT
+        Direction.UP -> "snake|192,0,64,64"
+        Direction.DOWN -> "snake|256,64,64,64"
+        Direction.LEFT -> "snake|192,64,64,64"
+        Direction.RIGHT -> "snake|256,0,64,64"
     }
     val tailImage = when (getTailDirection(snake)) {
-        Direction.UP -> TAILUP
-        Direction.DOWN -> TAILDOWN
-        Direction.LEFT -> TAILLEFT
-        Direction.RIGHT -> TAILRIGHT
+        Direction.UP -> "snake|192,128,64,64"
+        Direction.DOWN -> "snake|256,192,64,64"
+        Direction.LEFT -> "snake|192,192,64,64"
+        Direction.RIGHT -> "snake|256,128,64,64"
     }
     this.drawImage(headImage, snake.body.first().x * 32, snake.body.first().y * 32, 32, 32)
     this.drawImage(tailImage, snake.body.last().x * 32, snake.body.last().y * 32, 32, 32)

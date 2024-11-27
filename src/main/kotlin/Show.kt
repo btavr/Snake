@@ -3,7 +3,7 @@ import pt.isel.canvas.*
 // Função de extensão para desenhar os tijolos
 fun Canvas.drawBricks(wall: List<Position>) {
     for (brick in wall) {
-        this.drawImage("brick.png", brick.x * CEL, brick.y * CEL, CEL, CEL)
+        this.drawImage("brick.png", brick.x * 32, brick.y * 32, 32, 32)
     }
 }
 

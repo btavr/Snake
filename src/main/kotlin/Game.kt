@@ -1,13 +1,10 @@
 import pt.isel.canvas.*
-const val WIDTH      = 640
-const val HEIGHT     = 512
-const val CEL        = 32
 
 data class Game(val snake: Snake, val wall: List<Position>)
 
 fun main() {
     onStart {
-        val arena = Canvas(WIDTH, HEIGHT, YELLOW) // 20x16 células de 32px
+        val arena = Canvas(640, 512, YELLOW) // 20x16 células de 32px
         val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8)), Direction.RIGHT)
         var game = Game(snake, wall = emptyList())
 
