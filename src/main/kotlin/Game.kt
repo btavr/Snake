@@ -27,7 +27,7 @@ fun main() {
             }
         }
 
-        arena.onTimeProgress(250) { elapsed ->
+        arena.onTimeProgress(50) { elapsed ->
             val nextPosition = game.snake.nextHeadPosition()
             val newSnake = if (nextPosition in game.wall || nextPosition in game.dynamicWall || nextPosition in game.snake.body) {
                 game.snake // Cobra colidiu com um tijolo ou consigo mesma

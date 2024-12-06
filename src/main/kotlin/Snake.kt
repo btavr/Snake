@@ -51,7 +51,7 @@ fun Snake.changeDirection(newDirection: Direction): Snake {
 fun Snake.nextHeadPosition(): Position {
     val head = body.first()
     val movement = when (direction) {
-        Direction.UP -> Position(0, -1)
+        Direction.UP -> this.x)
         Direction.DOWN -> Position(0, 1)
         Direction.LEFT -> Position(-1, 0)
         Direction.RIGHT -> Position(1, 0)
