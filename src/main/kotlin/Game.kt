@@ -1,12 +1,12 @@
 import pt.isel.canvas.*
 
-data class Game(val snake: Snake, val wall: List<Position>, val score: Int, val elapsedTime: Long)
+data class Game(val snake: Snake, val wall: List<Position>, val score: Int, val elapsedTime: Long, val dynamicWall: List<Position>)
 
 fun main() {
     onStart {
         val arena = Canvas(640, 512, YELLOW) // 20x16 células de 32px
         val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8)), Direction.RIGHT)
-        var game = Game(snake, wall = initialBricks(), 10, 0L)
+        var game = Game(snake, initialBricks(), 10, 0L, dynamicWall = emptyList())
 
         arena.onKeyPressed { key ->
             val oldDirection = game.snake.direction
@@ -29,21 +29,22 @@ fun main() {
 
         arena.onTimeProgress(250) { elapsed ->
             val nextPosition = game.snake.nextHeadPosition()
-            val newSnake = if (nextPosition in game.wall || nextPosition in game.snake.body) {
+            val newSnake = if (nextPosition in game.wall || nextPosition in game.dynamicWall || nextPosition in game.snake.body) {
                 game.snake // Cobra colidiu com um tijolo ou consigo mesma
             } else {
                 game.snake.move()
             }
 
-            val newWall = if (elapsed / 5000 > game.wall.size) {
+            // Adicionar novos tijolos dinamicamente a cada 5000ms
+            val newDynamicWall = if (elapsed / 5000 > game.dynamicWall.size) {
                 generateBrick(game)
             } else {
-                game.wall
+                game.dynamicWall
             }
 
             game = game.copy(
                 snake = newSnake,
-                wall = newWall,
+                dynamicWall = newDynamicWall,
                 elapsedTime = elapsed // Atualiza o tempo decorrido
             )
 
@@ -61,23 +62,12 @@ fun drawGame(arena: Canvas, game: Game) {
     }
     // Desenhar tijolos
     arena.drawBricks(game.wall)
-    //arena.drawLine(0,490, 640,490, GREEN, 50)
+    arena.drawBricks(game.dynamicWall)
 
-    arena.drawRect(0, 490, arena.width, 22, BLACK)
+    arena.drawRect(0, 480, arena.width, 64, GREEN)
 
     val timeInSeconds = (game.elapsedTime / 1000).toInt()
-    arena.drawText(10, 510, "Size: ${game.snake.body.size}", WHITE)
-    arena.drawText(150, 510, "Score: ${game.score}", WHITE)
-    arena.drawText(300, 510, "Time: $timeInSeconds s", WHITE)
+    arena.drawText(10, 510, "Size: ${game.snake.body.size}", WHITE, 25)
+    arena.drawText(150, 510, "Score: ${game.score}", WHITE,25)
+    arena.drawText(300, 510, "Time: $timeInSeconds s", WHITE,25)
 }
-
-fun initialBricks(): List<Position> {
-    return listOf(
-        Position(0, 0), Position(0, 1), Position(0, 2), Position(0, 3), // Cantos
-        Position(19, 0), Position(19, 1), Position(19, 2), Position(19, 3),
-        Position(1, 0), Position(2, 0),
-        Position(18, 0), Position(17, 0)
-    )
-}
-
-

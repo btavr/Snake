@@ -1,6 +1,6 @@
 import pt.isel.canvas.*
 
-data class Snake(val body: List<Position>, val direction: Direction)
+data class Snake(val body: List<Position>, val direction: Direction, val toGrow: Int = 0)
 
 fun Canvas.drawSnake(snake: Snake) {
     this.erase()
