@@ -1,13 +1,16 @@
 import pt.isel.canvas.*
 
-data class Game(val snake: Snake, val wall: List<Position>, val score: Int, val elapsedTime: Long, val dynamicWall: List<Position>)
+data class Game(val snake: Snake, val wall: List<Position>, val apple: Position?, val score: Int, val elapsedTime: Long, val dynamicWall: List<Position>)
 
 fun main() {
     onStart {
         val arena = Canvas(640, 512, YELLOW) // 20x16 células de 32px
         val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8)), Direction.RIGHT)
-        var game = Game(snake, initialBricks(), 10, 0L, dynamicWall = emptyList())
+        var game = Game(snake, initialBricks(), apple = null, 10, 0L, dynamicWall = emptyList())
 
+        game = game.copy(
+            apple = generateApple(game)
+        )
         arena.onKeyPressed { key ->
             val oldDirection = game.snake.direction
             val newDirection = when (key.code) {
@@ -27,7 +30,7 @@ fun main() {
             }
         }
 
-        arena.onTimeProgress(50) { elapsed ->
+        arena.onTimeProgress(200) { elapsed ->
             val nextPosition = game.snake.nextHeadPosition()
             val newSnake = if (nextPosition in game.wall || nextPosition in game.dynamicWall || nextPosition in game.snake.body) {
                 game.snake // Cobra colidiu com um tijolo ou consigo mesma
@@ -42,9 +45,16 @@ fun main() {
                 game.dynamicWall
             }
 
+            val newApple = if (game.apple != null && nextPosition == game.apple) {
+                generateApple(game) // Gera nova posição para a maçã
+            } else {
+                game.apple // Mantém a posição atual da maçã
+            }
+
             game = game.copy(
                 snake = newSnake,
                 dynamicWall = newDynamicWall,
+                apple = newApple,
                 elapsedTime = elapsed // Atualiza o tempo decorrido
             )
 
@@ -63,6 +73,7 @@ fun drawGame(arena: Canvas, game: Game) {
     // Desenhar tijolos
     arena.drawBricks(game.wall)
     arena.drawBricks(game.dynamicWall)
+    arena.drawApple(game)
 
     arena.drawRect(0, 480, arena.width, 64, GREEN)
 

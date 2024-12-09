@@ -24,15 +24,16 @@ fun getTailDirection(snake: Snake): Direction {
     // Determine the direction of the tail based on the last two segments
     if (snake.body.size < 2) return snake.direction // Default to current direction if not enough segments
 
-    val tailEnd = snake.body.last()
-    val beforeTailEnd = snake.body[snake.body.size - 2]
-
-    return when {
-        tailEnd.x < beforeTailEnd.x -> Direction.RIGHT
-        tailEnd.x > beforeTailEnd.x -> Direction.LEFT
-        tailEnd.y < beforeTailEnd.y -> Direction.DOWN
-        else -> Direction.UP
-    }
+    return snake.direction
+//    val tailEnd = snake.body.last()
+//    val beforeTailEnd = snake.body[snake.body.size - 2]
+//
+//    return when {
+//        tailEnd.x < beforeTailEnd.x -> Direction.RIGHT
+//        tailEnd.x > beforeTailEnd.x -> Direction.LEFT
+//        tailEnd.y < beforeTailEnd.y -> Direction.DOWN
+//        else -> Direction.UP
+//    }
 }
 
 fun Snake.move(): Snake {
@@ -51,7 +52,7 @@ fun Snake.changeDirection(newDirection: Direction): Snake {
 fun Snake.nextHeadPosition(): Position {
     val head = body.first()
     val movement = when (direction) {
-        Direction.UP -> this.x)
+        Direction.UP -> Position(0,-1)
         Direction.DOWN -> Position(0, 1)
         Direction.LEFT -> Position(-1, 0)
         Direction.RIGHT -> Position(1, 0)
