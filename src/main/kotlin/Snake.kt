@@ -22,17 +22,10 @@ fun Canvas.drawSnake(snake: Snake) {
 
 fun getTailDirection(snake: Snake): Direction {
     // Determine the direction of the tail based on the last two segments
-    if (snake.body.size < 2) return snake.direction // Default to current direction if not enough segments
-
-    val tailEnd = snake.body.last()
-    val beforeTailEnd = snake.body[snake.body.size - 2]
-
-    return when {
-        tailEnd.x < beforeTailEnd.x -> Direction.RIGHT
-        tailEnd.x > beforeTailEnd.x -> Direction.LEFT
-        tailEnd.y < beforeTailEnd.y -> Direction.DOWN
-        else -> Direction.UP
-    }
+    if (snake.body.size < 2){
+        return snake.direction
+    } // Default to current direction if not enough segments
+    return snake.direction
 }
 
 fun Snake.move(): Snake {
@@ -45,7 +38,7 @@ fun Snake.changeDirection(newDirection: Direction): Snake {
         Snake(body, newDirection)
     } else {
         this
-    }
+    } 
 }
 
 fun Snake.nextHeadPosition(): Position {

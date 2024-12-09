@@ -4,7 +4,7 @@ data class Position(val x: Int, val y: Int) {
 
     fun wrap(): Position {
         val wrappedX = (x + 20) % 20 // Garante que x esteja no intervalo [0, 19]
-        val wrappedY = (y + 16) % 16 // Garante que y esteja no intervalo [0, 15]
+        val wrappedY = (y + 16) % 16// Garante que y esteja no intervalo [0, 15]
         return Position(wrappedX, wrappedY)
     }
 }
