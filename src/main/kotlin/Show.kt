@@ -36,7 +36,7 @@ fun Canvas.drawApple(game: Game) {
         this.drawImage("snake|0,192,64,64", apple.x * 32, apple.y * 32, 32, 32)
     }
 }
-
+//aaaaaaa
 // Gera uma nova posição válida para a maçã
 fun generateApple(game: Game): Position? {
     val totalCells = (0 until 20).flatMap { x -> (0 until 15).map { y -> Position(x, y) } }
