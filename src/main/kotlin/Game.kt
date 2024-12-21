@@ -6,7 +6,7 @@ fun main() {
     onStart {
         val arena = Canvas(640, 512, YELLOW) // 20x16 células de 32px
         val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8)), Direction.RIGHT)
-        var game = Game(snake, initialBricks(), apple = null, 10, 0L, dynamicWall = emptyList())
+        var game = Game(snake, initialBricks(), apple = null, 0, 0L, dynamicWall = emptyList())
 
         game = game.copy(
             apple = generateApple(game)
@@ -44,8 +44,9 @@ fun main() {
             } else {
                 game.dynamicWall
             }
-
+            var newScore = game.score
             val newApple = if (game.apple != null && nextPosition == game.apple) {
+                 newScore += 1
                 generateApple(game) // Gera nova posição para a maçã
             } else {
                 game.apple // Mantém a posição atual da maçã
@@ -55,6 +56,7 @@ fun main() {
                 snake = newSnake,
                 dynamicWall = newDynamicWall,
                 apple = newApple,
+                score = newScore,
                 elapsedTime = elapsed // Atualiza o tempo decorrido
             )
 
