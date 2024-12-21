@@ -35,43 +35,60 @@ fun getTailDirection(snake: Snake): Direction {
         Direction.RIGHT
     } else if (tailEnd.x == 0 && beforeTailEnd.x == 19){
         Direction.LEFT
-    } else if (tailEnd.y == 0 && beforeTailEnd.y == 19){
+    } else if (tailEnd.y == 0 && beforeTailEnd.y == 14){
         Direction.DOWN
-    } else if (tailEnd.y == 19 && beforeTailEnd.y == 0){
+    } else if (tailEnd.y == 14 && beforeTailEnd.y == 0){
         Direction.UP
     } else {
         when {
             tailEnd.x < beforeTailEnd.x -> Direction.RIGHT
             tailEnd.x > beforeTailEnd.x -> Direction.LEFT
             tailEnd.y < beforeTailEnd.y -> Direction.DOWN
-            else -> Direction.UP
+            tailEnd.y > beforeTailEnd.y -> Direction.UP
+            else -> snake.direction
         }
     }
 }
 
 // Função auxiliar para obter a direção do segmento seguinte
 fun getNextSegmentDirection(snake: Snake, index: Int): Direction {
-    if (snake.body.size < 2 || index >= snake.body.size - 1) return snake.direction
     val currentSegment = snake.body[index]
     val nextSegment = snake.body[index + 1]
-    return when {
+    return if (currentSegment.x == 19 && nextSegment.x == 0) {
+        Direction.RIGHT
+    } else if (currentSegment.x == 0 && nextSegment.x == 19) {
+        Direction.LEFT
+    } else if (currentSegment.y == 14 && nextSegment.y == 0) {
+        Direction.DOWN
+    } else if (currentSegment.y == 0 && nextSegment.y == 14) {
+        Direction.UP
+    } else when {
         currentSegment.x < nextSegment.x -> Direction.RIGHT
         currentSegment.x > nextSegment.x -> Direction.LEFT
         currentSegment.y < nextSegment.y -> Direction.DOWN
-        else -> Direction.UP
+        currentSegment.y > nextSegment.y -> Direction.UP
+        else -> snake.direction
     }
 }
 
 // Função auxiliar para obter a direção do segmento anterior
 fun getPrevSegmentDirection(snake: Snake, index: Int): Direction {
-    if (snake.body.size < 2 || index <= 0) return snake.direction
     val currentSegment = snake.body[index]
     val prevSegment = snake.body[index - 1]
-    return when {
+    return if (currentSegment.x == 19 && prevSegment.x == 0) {
+        Direction.LEFT
+    } else if (currentSegment.x == 0 && prevSegment.x == 19) {
+        Direction.RIGHT
+    } else if (currentSegment.y == 0 && prevSegment.y == 14) {
+        Direction.DOWN
+    } else if (currentSegment.y == 14 && prevSegment.y == 0) {
+        Direction.UP
+    } else when {
         currentSegment.x < prevSegment.x -> Direction.LEFT
         currentSegment.x > prevSegment.x -> Direction.RIGHT
         currentSegment.y < prevSegment.y -> Direction.UP
-        else -> Direction.DOWN
+        currentSegment.y > prevSegment.y -> Direction.DOWN
+        else -> snake.direction
     }
 }
 
@@ -110,10 +127,10 @@ fun Snake.nextHeadPosition(): Position {
 fun getSegmentImage(prevDirection: Direction, nextDirection: Direction): String {
     if (prevDirection == nextDirection) {
         // Use the straight segment image
-        return if (nextDirection in listOf(Direction.LEFT, Direction.RIGHT)) {
-            "snake|64,0,64,64"  // Horizontal segment
+        return if (nextDirection in listOf(Direction.UP, Direction.DOWN)) {
+            "snake|128,64,64,64"
         } else {
-            "snake|128,64,64,64"  // Vertical segment
+            "snake|64,0,64,64"  // Horizontal segment"// Vertical segment
         }
     } else {
         // Determine corner image based on direction change
@@ -126,18 +143,10 @@ fun getSegmentImage(prevDirection: Direction, nextDirection: Direction): String 
             prevDirection == Direction.LEFT && nextDirection == Direction.UP -> "snake|0,64,64,64"  // Bottom-left corner
             prevDirection == Direction.DOWN && nextDirection == Direction.LEFT -> "snake|128,128,64,64"  // Bottom-right corner
             prevDirection == Direction.LEFT && nextDirection == Direction.DOWN -> "snake|0,0,64,64"  // Top-left corner
-            else -> {
-                // Se não houver correspondência, verifica se a direção é horizontal ou vertical
-                if (prevDirection in listOf(Direction.LEFT, Direction.RIGHT) || nextDirection in listOf(Direction.LEFT, Direction.RIGHT)) {
-                    "snake|64,0,64,64"  // Horizontal segment
-                } else {
-                    "snake|128,64,64,64"  // Vertical segment
-                }
-            }
+            else -> "snake|128,64,64,64"  // Default to vertical segment if no match
         }
     }
 }
-
 
 enum class Direction {
     UP, DOWN, LEFT, RIGHT;
