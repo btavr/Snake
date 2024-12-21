@@ -5,7 +5,7 @@ data class Game(val snake: Snake, val wall: List<Position>, val apple: Position?
 fun main() {
     onStart {
         val arena = Canvas(640, 512, YELLOW) // 20x16 células de 32px
-        val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8)), Direction.RIGHT, toGrow = 5)
+        val snake = Snake(listOf(Position(10, 8), Position(10 - 1, 8), Position(10 - 2, 8), Position(10 - 3, 8), Position(10 - 4, 8)), Direction.RIGHT, toGrow = 0)
         var game = Game(snake, initialBricks(), apple = null, 0, 0L, dynamicWall = emptyList())
 
         game = game.copy(
