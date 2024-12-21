@@ -8,7 +8,7 @@ fun Canvas.drawBricks(wall: List<Position>) {
 }
 
 fun generateBrick(game: Game): List<Position> {
-    val totalCells = (0 until 20).flatMap { x -> (0 until 15).map { y -> Position(x, y) } }
+    val totalCells = (0 until 20).flatMap { x -> (0 until 14).map { y -> Position(x, y) } }
     val freeCells = totalCells.filter {
         it !in game.snake.body && it !in game.wall && it !in game.dynamicWall
     }
