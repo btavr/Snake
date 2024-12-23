@@ -31,6 +31,11 @@ fun main() {
         }
 
         arena.onTimeProgress(200) { elapsed ->
+//            if (checkGameOver(game)) {
+//                arena.drawText(10, 10, if (game.snake.body.size >= 60) "You Win" else "You Lose", RED, 30)
+//                return@onTimeProgress // Termina o loop de atualização
+//            }
+
             val nextPosition = game.snake.nextHeadPosition()
             var newSnake = if (nextPosition in game.wall || nextPosition in game.dynamicWall || nextPosition in game.snake.body) {
                 game.snake // Cobra colidiu com um tijolo ou consigo mesma
@@ -85,3 +90,33 @@ fun drawGame(arena: Canvas, game: Game) {
     arena.drawText(150, 510, "Score: ${game.score}", WHITE,25)
     arena.drawText(300, 510, "Time: $timeInSeconds s", WHITE,25)
 }
+
+//fun checkGameOver(game: Game): Boolean {
+//    if (game.snake.nextHeadPosition() in game.wall )
+//}
+//    val directions = listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT)
+//
+//    // Verifica se há pelo menos uma direção válida para se mover
+//    val canMove = directions.any { direction ->
+//        val nextPosition = game.snake.body.first() + when (direction) {
+//            Direction.UP -> Position(0, -1)
+//            Direction.DOWN -> Position(0, 1)
+//            Direction.LEFT -> Position(-1, 0)
+//            Direction.RIGHT -> Position(1, 0)
+//        }.wrap()
+//
+//        // Verifica se a próxima posição está livre (não colide com tijolos ou o corpo da cobra)
+//        nextPosition !in game.snake.body &&
+//                nextPosition !in game.wall &&
+//                nextPosition !in game.dynamicWall
+//    }
+//
+//    // Se não puder se mover em nenhuma direção
+//    if (!canMove) {
+//        if (game.snake.body.size >= 60)
+//        return true // Indica que o jogo acabou
+//    }
+//
+//    return false // O jogo continua
+//}
+

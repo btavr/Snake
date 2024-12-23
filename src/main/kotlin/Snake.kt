@@ -35,9 +35,9 @@ fun getTailDirection(snake: Snake): Direction {
         Direction.RIGHT
     } else if (tailEnd.x == 0 && beforeTailEnd.x == 19){
         Direction.LEFT
-    } else if (tailEnd.y == 0 && beforeTailEnd.y == 14){
-        Direction.DOWN
     } else if (tailEnd.y == 14 && beforeTailEnd.y == 0){
+        Direction.DOWN
+    } else if (tailEnd.y == 0 && beforeTailEnd.y == 14){
         Direction.UP
     } else {
         when {
