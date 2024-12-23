@@ -1,33 +1,38 @@
 import pt.isel.canvas.*
-
+// Este ficheiro descreve a logica da classe snake e das suas funcoes
 data class Snake(val body: List<Position>, val direction: Direction, val toGrow: Int = 0)
 
 fun Canvas.drawSnake(snake: Snake) {
     this.erase()
+    // Desenha a cabeca da cobra com base na direcao atual
     val headImage = when (snake.direction) {
         Direction.UP -> "snake|192,0,64,64"
         Direction.DOWN -> "snake|256,64,64,64"
         Direction.LEFT -> "snake|192,64,64,64"
         Direction.RIGHT -> "snake|256,0,64,64"
     }
-    // Desenhar o corpo
+    this.drawImage(headImage, snake.body.first().x * 32, snake.body.first().y * 32, 32, 32)
+    // Desenha o corpo da cobra
+    // Por cada elemento presente no corpo da cobra determina a direcao do elemento anterior e do elemento seguinte para escolher a imagem certa para o elemento atual
     for (i in 1 until snake.body.size - 1) {
         val prevDirection = getPrevSegmentDirection(snake, i)
         val nextDirection = getNextSegmentDirection(snake, i)
         val segmentImage = getSegmentImage(prevDirection, nextDirection)
         this.drawImage(segmentImage, snake.body[i].x * 32, snake.body[i].y * 32, 32, 32)
     }
-
+    // Desenha a cauda da cobra com base na direcao atual
     val tailImage = when (getTailDirection(snake)) {
         Direction.UP -> "snake|192,128,64,64"
         Direction.DOWN -> "snake|256,192,64,64"
         Direction.LEFT -> "snake|192,192,64,64"
         Direction.RIGHT -> "snake|256,128,64,64"
     }
-    this.drawImage(headImage, snake.body.first().x * 32, snake.body.first().y * 32, 32, 32)
     this.drawImage(tailImage, snake.body.last().x * 32, snake.body.last().y * 32, 32, 32)
 }
 
+// Define a direcao da cauda para escolher a imagem certa na funcao drawSnake
+// Compara as coordenadas do elemento cauda e do elemento anterior a cauda
+// Define casos especificos para quando a cobra esta a passar pelos limites da arena
 fun getTailDirection(snake: Snake): Direction {
     val tailEnd = snake.body.last()
     val beforeTailEnd = snake.body[snake.body.size - 2]
@@ -50,7 +55,9 @@ fun getTailDirection(snake: Snake): Direction {
     }
 }
 
-// Função auxiliar para obter a direção do segmento seguinte
+// Define a direcao do elemento seguints para escolher a imagem certa na funcao drawSnake
+// Compara as coordenadas do elemento atual da cobra e do elemento seguinte
+// Define casos especificos para quando a cobra esta a passar pelos limites da arena
 fun getNextSegmentDirection(snake: Snake, index: Int): Direction {
     val currentSegment = snake.body[index]
     val nextSegment = snake.body[index + 1]
@@ -71,7 +78,9 @@ fun getNextSegmentDirection(snake: Snake, index: Int): Direction {
     }
 }
 
-// Função auxiliar para obter a direção do segmento anterior
+// Define a direcao do elemento anterior para escolher a imagem certa na funcao drawSnake
+// Compara as coordenadas do elemento atual da cobra e do elemento anterior
+// Define casos especificos para quando a cobra esta a passar pelos limites da arena
 fun getPrevSegmentDirection(snake: Snake, index: Int): Direction {
     val currentSegment = snake.body[index]
     val prevSegment = snake.body[index - 1]
@@ -92,7 +101,7 @@ fun getPrevSegmentDirection(snake: Snake, index: Int): Direction {
     }
 }
 
-
+// Faz a cobra crescer com base na variavel toGrow
 fun Snake.move(): Snake {
     val newHead = nextHeadPosition()
     val newBody = if (toGrow > 0) {
@@ -101,9 +110,8 @@ fun Snake.move(): Snake {
         listOf(newHead) + body.dropLast(1)
     }
     return Snake(newBody, direction, maxOf(toGrow - 1, 0))
-    //return Snake(listOf(newHead) + body.dropLast(1), direction)
 }
-
+// Altera a direcao da cobra. Nao permite que altere diretamente para a direcao oposta
 fun Snake.changeDirection(newDirection: Direction): Snake {
     return if (newDirection != direction.opposite()) {
         Snake(body, newDirection)
@@ -111,7 +119,7 @@ fun Snake.changeDirection(newDirection: Direction): Snake {
         this
     }
 }
-
+// Define a proxima posicao da cobra com base nas coordenadas de movimento
 fun Snake.nextHeadPosition(): Position {
     val head = body.first()
     val movement = when (direction) {
@@ -123,27 +131,27 @@ fun Snake.nextHeadPosition(): Position {
     return (head + movement).wrap()
 }
 
-// Função para obter a imagem do segmento com base nas direções anteriores e seguintes
+// Função para obter a imagem do segmento com base nas direções dos elementos anteriores e seguintes
 fun getSegmentImage(prevDirection: Direction, nextDirection: Direction): String {
     if (prevDirection == nextDirection) {
-        // Use the straight segment image
+        // Direcao Vertical
         return if (nextDirection in listOf(Direction.UP, Direction.DOWN)) {
             "snake|128,64,64,64"
         } else {
-            "snake|64,0,64,64"  // Horizontal segment"// Vertical segment
+            "snake|64,0,64,64"  //Direcao Horizontal
         }
     } else {
-        // Determine corner image based on direction change
+        // Escolha a imagem para as curvas da cobra com base nas direcoes
         return when {
-            prevDirection == Direction.UP && nextDirection == Direction.RIGHT -> "snake|0,0,64,64"  // Top-left corner
-            prevDirection == Direction.RIGHT && nextDirection == Direction.UP -> "snake|128,128,64,64"  // Bottom-right corner
-            prevDirection == Direction.DOWN && nextDirection == Direction.RIGHT -> "snake|0,64,64,64"  // Bottom-left corner
-            prevDirection == Direction.RIGHT && nextDirection == Direction.DOWN -> "snake|128,0,64,64"  // Top-right corner
-            prevDirection == Direction.UP && nextDirection == Direction.LEFT -> "snake|128,0,64,64"  // Top-right corner
-            prevDirection == Direction.LEFT && nextDirection == Direction.UP -> "snake|0,64,64,64"  // Bottom-left corner
-            prevDirection == Direction.DOWN && nextDirection == Direction.LEFT -> "snake|128,128,64,64"  // Bottom-right corner
-            prevDirection == Direction.LEFT && nextDirection == Direction.DOWN -> "snake|0,0,64,64"  // Top-left corner
-            else -> "snake|128,64,64,64"  // Default to vertical segment if no match
+            prevDirection == Direction.UP && nextDirection == Direction.RIGHT -> "snake|0,0,64,64"
+            prevDirection == Direction.RIGHT && nextDirection == Direction.UP -> "snake|128,128,64,64"
+            prevDirection == Direction.DOWN && nextDirection == Direction.RIGHT -> "snake|0,64,64,64"
+            prevDirection == Direction.RIGHT && nextDirection == Direction.DOWN -> "snake|128,0,64,64"
+            prevDirection == Direction.UP && nextDirection == Direction.LEFT -> "snake|128,0,64,64"
+            prevDirection == Direction.LEFT && nextDirection == Direction.UP -> "snake|0,64,64,64"
+            prevDirection == Direction.DOWN && nextDirection == Direction.LEFT -> "snake|128,128,64,64"
+            prevDirection == Direction.LEFT && nextDirection == Direction.DOWN -> "snake|0,0,64,64"
+            else -> "snake|128,64,64,64"  // Escolhe um default
         }
     }
 }

@@ -7,6 +7,7 @@ fun Canvas.drawBricks(wall: List<Position>) {
     }
 }
 
+// Funcao para criar bricks e coloca-los em celulas livres
 fun generateBrick(game: Game): List<Position> {
     val totalCells = (0 until 20).flatMap { x -> (0 until 14).map { y -> Position(x, y) } }
     val freeCells = totalCells.filter {
@@ -20,6 +21,7 @@ fun generateBrick(game: Game): List<Position> {
     }
 }
 
+// Cria os bricks iniciais
 fun initialBricks(): List<Position> {
     return listOf(
         Position(1, 0), Position(2, 0), Position(0, 0), Position(0, 1), Position(0, 2), Position(0, 3),
@@ -30,7 +32,7 @@ fun initialBricks(): List<Position> {
     )
 }
 
-// Função para desenhar a maçã com base na posição atual do jogo
+// Função para desenhar a maçã
 fun Canvas.drawApple(game: Game) {
     game.apple?.let { apple ->
         this.drawImage("snake|0,192,64,64", apple.x * 32, apple.y * 32, 32, 32)

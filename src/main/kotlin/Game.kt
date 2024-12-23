@@ -1,5 +1,5 @@
 import pt.isel.canvas.*
-
+// Neste ficheiro econtra-se toda a logica do jogo e os seus elementos
 data class Game(val snake: Snake, val wall: List<Position>, val apple: Position?, val score: Int, val elapsedTime: Long, val dynamicWall: List<Position>)
 
 fun main() {
@@ -11,6 +11,7 @@ fun main() {
         game = game.copy(
             apple = generateApple(game)
         )
+        //Logica para mudancas de direcao atravez das setas do teclado
         arena.onKeyPressed { key ->
             val oldDirection = game.snake.direction
             val newDirection = when (key.code) {
@@ -20,6 +21,7 @@ fun main() {
                 RIGHT_CODE -> Direction.RIGHT
                 else -> game.snake.direction
             }
+            // Muda a direcao da cobra
             if (newDirection != game.snake.direction.opposite()) {
                 val newSnakeDirection = game.snake.changeDirection(newDirection)
                 if (newSnakeDirection.nextHeadPosition() in game.wall){
@@ -31,17 +33,20 @@ fun main() {
         }
 
         arena.onTimeProgress(200) { elapsed ->
+            // Caso a cobra nao se possa mexer o jogo termina
+            // Se a cobra for >= 60, ganha o jogo
+            // Se a cobra for < 60, perde o jogo
             if (!canMove(game)) {
                 if (game.snake.body.size >= 60) {
                     arena.drawText(140, 250, "GAME OVER", GREEN, 60)
                     arena.drawText(525, 505, "You win!", GREEN, 25)
-
                 } else {
                     arena.drawText(140, 250, "GAME OVER", RED, 60)
                     arena.drawText(525, 505, "You lose!", RED, 25)
                 }
-                return@onTimeProgress // Stop updating the game loop
-            }
+                return@onTimeProgress
+            }   // Print game over a verde caso vitoria e a vermelho caso derrota
+                // Atualiza a barra de estados com You win ou You lose
             val nextPosition = game.snake.nextHeadPosition()
             var newSnake = if (nextPosition in game.wall || nextPosition in game.dynamicWall || nextPosition in game.snake.body) {
                 game.snake // Cobra colidiu com um tijolo ou consigo mesma
@@ -49,21 +54,22 @@ fun main() {
                 game.snake.move()
             }
 
-            // Adicionar novos tijolos dinamicamente a cada 5000ms
+            // Adicionar novos tijolos a cada 5000ms
             val newDynamicWall = if (elapsed / 5000 > game.dynamicWall.size) {
                 generateBrick(game)
             } else {
                 game.dynamicWall
             }
             var newScore = game.score
+            // Quando a cobra come a maca acrescenta +1 as variaveis toGrow e score
             val newApple = if (game.apple != null && nextPosition == game.apple) {
                  newScore += 1
                  newSnake = newSnake.copy(toGrow = newSnake.toGrow + 1)
-                generateApple(game) // Gera nova posição para a maçã
+                generateApple(game)
             } else {
-                game.apple // Mantém a posição atual da maçã
+                game.apple
             }
-
+            // Atualiza o jogo e os seus elementos
             game = game.copy(
                 snake = newSnake,
                 dynamicWall = newDynamicWall,
@@ -77,7 +83,7 @@ fun main() {
     }
     onFinish {}
 }
-
+ // desenha o jogo com todos os seus elementos
 fun drawGame(arena: Canvas, game: Game) {
     arena.erase()
     // Desenhar cobra
@@ -87,44 +93,32 @@ fun drawGame(arena: Canvas, game: Game) {
     // Desenhar tijolos
     arena.drawBricks(game.wall)
     arena.drawBricks(game.dynamicWall)
+    // Desenha maca
     arena.drawApple(game)
 
+    // Desenha barra de estados
     arena.drawRect(0, 480, arena.width, 64, BLUE)
-
+    // Desenha componentes da barra de estados
     val timeInSeconds = (game.elapsedTime / 1000).toInt()
     arena.drawText(10, 505, "Size: ${game.snake.body.size}", WHITE, 25)
     arena.drawText(150, 505, "Score: ${game.score}", WHITE,25)
     arena.drawText(300, 505, "Time: $timeInSeconds s", WHITE,25)
 }
 
+// Verifica se a cobra se pode mover ou se esta presa.
+// Verifica se as possiveis possicoes, LEFT, RIGHT, UP E DOWN, ja se encontram ocupadas com bricks ou com o corpo da cobra
+//
 fun canMove(game: Game): Boolean {
-    // Define all possible movements based on the current head position
+    // Define as proximas posicoes possiveis para a cabeca da cobra com base na sua localizacao atual
     val possiblePositions = listOf(
         game.snake.body.first() + Position(0, -1),  // Move UP
         game.snake.body.first() + Position(0, 1),   // Move DOWN
         game.snake.body.first() + Position(-1, 0),  // Move LEFT
         game.snake.body.first() + Position(1, 0)    // Move RIGHT
-    ).map { it.wrap() } // Ensure positions wrap around the scree
+    ).map { it.wrap() }
     return   possiblePositions.any { nextPosition ->
-        nextPosition !in game.snake.body && // Not colliding with snake body
-                nextPosition !in game.wall && // Not colliding with static walls
-                nextPosition !in game.dynamicWall // Not colliding with dynamic walls
-    }
+        nextPosition !in game.snake.body &&
+                nextPosition !in game.wall &&
+                nextPosition !in game.dynamicWall
+    }   // Verifica que existe uma possicao livre e que a cobra se pode mexer
 }
-
-
-//fun gameOver(game: Game): Boolean {
-//    // Use canMove to check if the snake can move
-//    if (!canMove(game)) {
-//        // Determine win or lose based on the size of the snake's body
-//        val message = if (game.snake.body.size >= 60) "You Win" else "You Lose"
-//
-//        println(message) // Print to console for debugging purposes
-//
-//        return true // The game is over
-//    }
-//
-//    return false // The game continues
-//}
-
-
