@@ -31,11 +31,17 @@ fun main() {
         }
 
         arena.onTimeProgress(200) { elapsed ->
-//            if (checkGameOver(game)) {
-//                arena.drawText(10, 10, if (game.snake.body.size >= 60) "You Win" else "You Lose", RED, 30)
-//                return@onTimeProgress // Termina o loop de atualização
-//            }
+            if (!canMove(game)) {
+                if (game.snake.body.size >= 60) {
+                    arena.drawText(140, 250, "GAME OVER", GREEN, 60)
+                    arena.drawText(525, 505, "You win!", GREEN, 25)
 
+                } else {
+                    arena.drawText(140, 250, "GAME OVER", RED, 60)
+                    arena.drawText(525, 505, "You lose!", RED, 25)
+                }
+                return@onTimeProgress // Stop updating the game loop
+            }
             val nextPosition = game.snake.nextHeadPosition()
             var newSnake = if (nextPosition in game.wall || nextPosition in game.dynamicWall || nextPosition in game.snake.body) {
                 game.snake // Cobra colidiu com um tijolo ou consigo mesma
@@ -83,40 +89,42 @@ fun drawGame(arena: Canvas, game: Game) {
     arena.drawBricks(game.dynamicWall)
     arena.drawApple(game)
 
-    arena.drawRect(0, 480, arena.width, 64, GREEN)
+    arena.drawRect(0, 480, arena.width, 64, BLUE)
 
     val timeInSeconds = (game.elapsedTime / 1000).toInt()
-    arena.drawText(10, 510, "Size: ${game.snake.body.size}", WHITE, 25)
-    arena.drawText(150, 510, "Score: ${game.score}", WHITE,25)
-    arena.drawText(300, 510, "Time: $timeInSeconds s", WHITE,25)
+    arena.drawText(10, 505, "Size: ${game.snake.body.size}", WHITE, 25)
+    arena.drawText(150, 505, "Score: ${game.score}", WHITE,25)
+    arena.drawText(300, 505, "Time: $timeInSeconds s", WHITE,25)
 }
 
-//fun checkGameOver(game: Game): Boolean {
-//    if (game.snake.nextHeadPosition() in game.wall )
-//}
-//    val directions = listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT)
+fun canMove(game: Game): Boolean {
+    // Define all possible movements based on the current head position
+    val possiblePositions = listOf(
+        game.snake.body.first() + Position(0, -1),  // Move UP
+        game.snake.body.first() + Position(0, 1),   // Move DOWN
+        game.snake.body.first() + Position(-1, 0),  // Move LEFT
+        game.snake.body.first() + Position(1, 0)    // Move RIGHT
+    ).map { it.wrap() } // Ensure positions wrap around the scree
+    return   possiblePositions.any { nextPosition ->
+        nextPosition !in game.snake.body && // Not colliding with snake body
+                nextPosition !in game.wall && // Not colliding with static walls
+                nextPosition !in game.dynamicWall // Not colliding with dynamic walls
+    }
+}
+
+
+//fun gameOver(game: Game): Boolean {
+//    // Use canMove to check if the snake can move
+//    if (!canMove(game)) {
+//        // Determine win or lose based on the size of the snake's body
+//        val message = if (game.snake.body.size >= 60) "You Win" else "You Lose"
 //
-//    // Verifica se há pelo menos uma direção válida para se mover
-//    val canMove = directions.any { direction ->
-//        val nextPosition = game.snake.body.first() + when (direction) {
-//            Direction.UP -> Position(0, -1)
-//            Direction.DOWN -> Position(0, 1)
-//            Direction.LEFT -> Position(-1, 0)
-//            Direction.RIGHT -> Position(1, 0)
-//        }.wrap()
+//        println(message) // Print to console for debugging purposes
 //
-//        // Verifica se a próxima posição está livre (não colide com tijolos ou o corpo da cobra)
-//        nextPosition !in game.snake.body &&
-//                nextPosition !in game.wall &&
-//                nextPosition !in game.dynamicWall
+//        return true // The game is over
 //    }
 //
-//    // Se não puder se mover em nenhuma direção
-//    if (!canMove) {
-//        if (game.snake.body.size >= 60)
-//        return true // Indica que o jogo acabou
-//    }
-//
-//    return false // O jogo continua
+//    return false // The game continues
 //}
+
 
