@@ -1,6 +1,6 @@
 import pt.isel.canvas.*
 // Este ficheiro descreve a logica da classe snake e das suas funcoes
-data class Snake(val body: List<Position>, val direction: Direction, val toGrow: Int = 0)
+data class Snake(val body: List<Position>, val direction: Direction, val toGrow: Int = 0, val stopped: Boolean = false)
 
 fun Canvas.drawSnake(snake: Snake) {
     this.erase()
@@ -103,13 +103,14 @@ fun getPrevSegmentDirection(snake: Snake, index: Int): Direction {
 
 // Faz a cobra crescer com base na variavel toGrow
 fun Snake.move(): Snake {
+    if (stopped) return this
     val newHead = nextHeadPosition()
     val newBody = if (toGrow > 0) {
         listOf(newHead) + body
     } else {
         listOf(newHead) + body.dropLast(1)
     }
-    return Snake(newBody, direction, maxOf(toGrow - 1, 0))
+    return Snake(newBody, direction, maxOf(toGrow - 1, 0), stopped)
 }
 // Altera a direcao da cobra. Nao permite que altere diretamente para a direcao oposta
 fun Snake.changeDirection(newDirection: Direction): Snake {
