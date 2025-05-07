@@ -1,0 +1,16 @@
+# Gradle
+.gradle/
+build/
+
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Logs
+*.log
+
+# Environment variables
+.env
