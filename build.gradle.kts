@@ -20,3 +20,12 @@ tasks.test {
 kotlin {
     jvmToolchain(21)
 }
+
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE // Exclude duplicate files
+    manifest {
+        attributes["Main-Class"] = "GameKt" // Replace with your main class
+    }
+    from(sourceSets.main.get().output)
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
